@@ -1,5 +1,3 @@
-# DX9WareScripts
-
 ## Rush Point UI
 *Made by supg*
 
