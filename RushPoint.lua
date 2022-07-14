@@ -24,7 +24,7 @@ local teamcheck = Groupbox1:AddToggle({Text = "TeamCheck Enabled"}):OnChanged(fu
 end)
 
 --// Smoothness 
-local smoothness = Groupbox1:AddSlider({Text = "Aimbot Smoothness", Default = 0, Min = 1, Max = 30})
+local smoothness = Groupbox1:AddSlider({Text = "Aimbot Smoothness", Default = 1, Min = 1, Max = 30})
 
 --// Aimpart 
 local aimpart = Groupbox1:AddSlider({Text = "Aimpart", Default = 1, Min = 1, Max = 2}):OnChanged(function(value)
