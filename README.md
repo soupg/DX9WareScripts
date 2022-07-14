@@ -1,5 +1,5 @@
 ## Rush Point UI
-*Made by supg*
+*Made by supg* | Make sure the script is not turned on in the lobby (or it will crash)!
 
 ```lua
 loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/RushPoint.lua"))()
