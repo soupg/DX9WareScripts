@@ -219,7 +219,9 @@ function BoxESP(params) -- params = {*Target = model, Color = {r,g,b}, Healthbar
                 loc = {dx9.GetMouse().x, dx9.GetMouse().y}
             end
 
-            dx9.DrawLine(loc, {Top.x + width + (((Bottom.x - width) - (Top.x + width)) / 2), Bottom.y}, box_color)
+            if (Top.x + width + (((Bottom.x - width) - (Top.x + width)) / 2)) + (Bottom.y) ~= 0 then
+                dx9.DrawLine(loc, {Top.x + width + (((Bottom.x - width) - (Top.x + width)) / 2), Bottom.y}, box_color)
+            end
         end
     else
         error("[Error] BoxESP: Passed in target has no HumanoidRootPart!")
