@@ -15,3 +15,12 @@ loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/
 ```
 
 ---
+
+## BlackHawk UI | NPC Aimbot & Esp
+*Made by supg*
+
+```lua
+loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/Blackhawk.lua"))()
+```
+
+---
