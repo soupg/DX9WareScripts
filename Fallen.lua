@@ -4,7 +4,6 @@ local Players = dx9.FindFirstChildOfClass(dx9.GetDatamodel(), "Players")
 local LocalPlayer = dx9.get_localplayer()
 local Mouse = dx9.GetMouse()
 
-
 --// Library
 local Lib = loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DXLibUI/main/main.lua"))()
 
@@ -56,10 +55,10 @@ if _G.Timer.Start ~= nil then
         dx9.DrawString({v[1], v[2] - 30}, {255, 255, 255}, i)
     end
 
-    if _G.Timer.Frame == 1 then
+    if _G.Timer.Frame > 3 then
         _G.Timer.Frame = 0
     else
-        _G.Timer.Frame = 1
+        _G.Timer.Frame = _G.Timer.Frame + 1
     end
     
     if _G.Timer.Frame == 0 and _G.Timer.Iteration == 1 then
@@ -355,14 +354,13 @@ for i,v in pairs(dx9.GetChildren(Workspace)) do
             end
         end
 
-    elseif dx9.GetType(v) == "Model" and dx9.FindFirstChild(v, "HumanoidRootPart") == nil then
+    elseif dx9.FindFirstChildOfClass(v, "MeshPart") and dx9.FindFirstChild(v, "HumanoidRootPart") == nil then
 
         --// Dropped Item ESP
         local pos = dx9.GetPosition(dx9.FindFirstChildOfClass(v, "MeshPart"))
         local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
-
         if wts.x > 0 and wts.y > 0 then--and distLimit > GetDistanceFromPlayer(pos) then
-            local espColor2 = {255,100,255}
+            local espColor2 = {255, 100, 255}
             dx9.DrawCircle({wts.x,wts.y}, {0,0,0}, 3);
             dx9.DrawCircle({wts.x,wts.y}, espColor2, 1);
 
