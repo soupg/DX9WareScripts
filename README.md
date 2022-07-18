@@ -24,3 +24,12 @@ loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/
 ```
 
 ---
+
+## Fallen UI | Player ESP, Spawned Items ESP, Deployables ESP, Code Guesser, + More
+*Made by supg | Script idea from !SolF#2408*
+
+```lua
+loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/Fallen.lua"))()
+```
+
+---
