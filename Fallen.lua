@@ -1,5 +1,4 @@
 --// Fallen ESP UI | Made by supg //--
-local key = dx9.GetKey()
 local Workspace = dx9.FindFirstChildOfClass(dx9.GetDatamodel(), "Workspace")
 local Players = dx9.FindFirstChildOfClass(dx9.GetDatamodel(), "Players")
 local LocalPlayer = dx9.get_localplayer()
@@ -53,10 +52,14 @@ if _G.Timer == nil then
 end
 
 if _G.Timer.Start ~= nil then
-    if _G.Timer.Frame > 10 then
+    for i,v in pairs(Lib.KeyLocations) do
+        dx9.DrawString({v[1], v[2] - 30}, {255, 255, 255}, i)
+    end
+
+    if _G.Timer.Frame == 1 then
         _G.Timer.Frame = 0
     else
-        _G.Timer.Frame = _G.Timer.Frame + 1
+        _G.Timer.Frame = 1
     end
     
     if _G.Timer.Frame == 0 and _G.Timer.Iteration == 1 then
@@ -97,7 +100,7 @@ if _G.Timer.Start ~= nil then
 end
 
 --// Start Guess
-if key == "[F]" then
+if Lib.Key == "[F]" then
     if _G.Timer.Start == nil then _G.Timer.Start = true end
 end
 
@@ -109,6 +112,7 @@ end
 
 Groupbox5:AddButton("Guess Code [F]  |  "..input, function()
     if _G.Timer.Start == nil then _G.Timer.Start = true end
+    Lib:Notify("Guessing Code ["..Lib.code_table[Lib.CodeIndex].."]", 1)
 end)
 
 Groupbox5:AddBlank(5)
@@ -119,10 +123,12 @@ Groupbox5:AddBorder()
 --// Actions
 Groupbox5:AddButton("Go to Next Code [ "..Lib.code_table[Lib.CodeIndex + 1].." ]", function()
     Lib.CodeIndex = Lib.CodeIndex + 1
+    Lib:Notify("Skipped Code", 1)
 end)
 
 Groupbox5:AddButton("Go to Previous Code [ "..Lib.code_table[Lib.CodeIndex - 1].." ]", function()
     Lib.CodeIndex = Lib.CodeIndex - 1
+    Lib:Notify("Went Back a Code", 1)
 end)
 
 Groupbox5:AddBlank(5)
