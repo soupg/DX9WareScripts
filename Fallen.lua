@@ -180,11 +180,13 @@ end)
 
 
 --/ Advanced Config
-local tracer_type = Groupbox11:AddSlider({Default = 3, Text = "Tracers Type", Min = 1, Max = 4})
-Groupbox11:AddLabel("1: Near-Bottom\n2: Bottom\n3: Top\n4: Mouse")
+local tracer_type = Groupbox11:AddDropdown({Text = "Tracers Type", Default = 1, Values = {"Near-Bottom", "Bottom", "Top", "Mouse"}}):OnChanged(function(value)
+    Lib:Notify("Tracer Type: "..value, 1)
+end)
 
-local box_type = Groupbox11:AddSlider({Default = 1, Text = "ESP Box Type", Min = 1, Max = 3})
-Groupbox11:AddLabel("1: 2D Corners\n2: 2D Box\n3: 3D Box")
+local box_type = Groupbox11:AddDropdown({Text = "ESP Box Type", Default = 1, Values = {"Corners", "2D Box", "3D Box"}}):OnChanged(function(value)
+    Lib:Notify("Box Type: "..value, 1)
+end)
 
 
 
@@ -264,7 +266,7 @@ function BoxESP(target)
         width = width / 1.2
 
         --// Draw Box
-        if box_type.Value == 1 then --// cormers
+        if box_type.ValueIndex == 1 then --// cormers
             dx9.DrawLine({Top.x + width + 2, Top.y}, {Top.x + (width/2) + 2, Top.y}, esp_color.Value) -- TopLeft 1
             dx9.DrawLine({Top.x + width + 2, Top.y}, {Top.x + width + 2, Top.y - (height/4)}, esp_color.Value) -- TopLeft 2
 
@@ -277,7 +279,7 @@ function BoxESP(target)
             dx9.DrawLine({Bottom.x - width, Bottom.y}, {Bottom.x - (width/2), Bottom.y}, esp_color.Value) -- BottomRight 1
             dx9.DrawLine({Bottom.x - width, Bottom.y}, {Bottom.x - width, Bottom.y + (height/4)}, esp_color.Value) -- BottomRight 2
 
-        elseif box_type.Value == 2 then
+        elseif box_type.ValueIndex == 2 then
             dx9.DrawBox({Bottom.x - width, Top.y}, {Top.x + width, Bottom.y}, esp_color.Value)
         else
             Box3d({torso.x - 2, HeadPosY, torso.z - 2}, {torso.x + 2, LegPosY, torso.z + 2}, esp_color.Value)
@@ -317,11 +319,11 @@ function BoxESP(target)
         if tracer.Value then
             local loc -- Location of tracer start
 
-            if tracer_type.Value == 1 then
+            if tracer_type.ValueIndex == 1 then
                 loc = {dx9.size().width / 2, dx9.size().height / 1.1}
-            elseif tracer_type.Value == 2 then
+            elseif tracer_type.ValueIndex == 2 then
                 loc = {dx9.size().width / 2, dx9.size().height}
-            elseif tracer_type.Value == 3 then
+            elseif tracer_type.ValueIndex == 3 then
                 loc = {dx9.size().width / 2, 1}
             else
                 loc = {dx9.GetMouse().x, dx9.GetMouse().y}
