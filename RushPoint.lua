@@ -67,7 +67,9 @@ local healthbar = Groupbox2:AddToggle({Text = "Show Healthbar"}):OnChanged(funct
     if value then Lib:Notify("Healthbar Enabled", 1) else Lib:Notify("Healthbar Disabled", 1) end
 end)
 
-local box_type = Groupbox2:AddSlider({Text = "Box Type", Default = 1, Min = 1, Max = 3})
+local box_type = Groupbox2:AddDropdown({Text = "Box Type", Default = 1, Values = {"Corners", "2D Box", "3D Box"}}):OnChanged(function(value)
+    Lib:Notify("Box Type: "..value, 1)
+end)
 
 local esp_color = Groupbox2:AddColorPicker({Default = {255,255,255}, Text = "ESP Color"})
 
@@ -78,7 +80,11 @@ local tracer = Groupbox2:AddToggle({Text = "Tracer Enabled"}):OnChanged(function
     if value then Lib:Notify("Tracer Enabled", 1) else Lib:Notify("Tracer Disabled", 1) end
 end)
 
-local tracer_type = Groupbox2:AddSlider({Text = "Tracer Type", Default = 1, Min = 1, Max = 3})
+
+local tracer_type = Groupbox2:AddDropdown({Text = "Tracer Type", Default = 1, Values = {"Near-Bottom", "Bottom", "Top", "Mouse"}}):OnChanged(function(value)
+    Lib:Notify("Tracer Type: "..value, 1)
+end)
+
 
 
 --// My Box ESP Function (from DXLib) //-- 
@@ -255,7 +261,7 @@ for i,v in pairs(dx9.GetChildren(Players)) do
 
     --// Player ESP
     if esp.Value and dx9.GetStringValue(dx9.FindFirstChild(v, "Team")) ~= GetLocalPlayerTeam() and dx9.GetName(v) ~= LocalPlayer.Info.Name then
-        BoxESP({Target = v, Color = esp_color.Value, Healthbar = healthbar.Value, Distance = distance.Value, Nametag = nametags.Value, Tracer = tracer.Value, TracerType = tracer_type.Value, BoxType = box_type.Value} )
+        BoxESP({Target = v, Color = esp_color.Value, Healthbar = healthbar.Value, Distance = distance.Value, Nametag = nametags.Value, Tracer = tracer.Value, TracerType = tracer_type.ValueIndex, BoxType = box_type.ValueIndex} )
     end
 
     --// Getting Target
