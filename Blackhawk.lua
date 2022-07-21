@@ -177,7 +177,7 @@ local closestEnemy = {position = {0,0}, distance = 696969}
 for i,v in pairs(dx9.GetChildren(NPC_folder)) do
     if #dx9.GetChildren(dx9.FindFirstChild(dx9.FindFirstChild(v, "HumanoidRootPart"), "RootRigAttachment")) == 0 then
         local apos = dx9.GetPosition(dx9.FindFirstChild(v, "HumanoidRootPart"))
-        local awts = dx9.WorldToScreen({apos.x,apos.y,apos.z})
+        local awts = dx9.WorldToScreen({apos.x,apos.y + 2,apos.z})
 
         local x = (Mouse.x - awts.x) * (Mouse.x - awts.x)
         local y = (Mouse.y - awts.y) * (Mouse.y - awts.y)
