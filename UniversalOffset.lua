@@ -62,9 +62,20 @@ end
 
 --// Determines which ImageLabel moves with mouse
 if #_G.Offset.Descendants > 0 then
-    if _G.Offset.NewMouse == nil then  
+    if _G.Offset.NewMouse == nil then 
+
+        function FovCheck(v)
+            local v = dx9.GetImageLabelPosition(v)
+            local x = (Mouse.x - v.x) * (Mouse.x - v.x)
+            local y = (Mouse.y - v.y) * (Mouse.y - v.y)
+    
+            return math.floor(math.sqrt(x + y))
+        end
+
         for i,v in pairs(_G.Offset.OldPositions) do
-            if dx9.GetImageLabelPosition(i).x ~= v then _G.Offset.NewMouse = i end
+            if dx9.GetImageLabelPosition(i).x ~= v and FovCheck(i) < 100 then 
+                _G.Offset.NewMouse = i 
+            end
         end
 
         dx9.SetAimbotValue("x", 0);
