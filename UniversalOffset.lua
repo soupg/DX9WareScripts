@@ -46,12 +46,13 @@ end
 
 --// Initiates Variables
 if _G.Offset == nil then
-    Lib:Notify("Calibrating Offset...", 1)
+    Lib:Notify("Calibrating offset, please move your mouse around", 3)
     
     _G.Offset = {
         Descendants = GetDescendants(gui_path);
         NewMouse = nil;
-        OldPositions = {}
+        OldPositions = {};
+        Notified = false;
     }
 
     for i,v in pairs(_G.Offset.Descendants) do
@@ -62,8 +63,6 @@ end
 --// Determines which ImageLabel moves with mouse
 if #_G.Offset.Descendants > 0 then
     if _G.Offset.NewMouse == nil then  
-        dx9.DrawString({Mouse.x + 3, Mouse.y}, {255,255,255}, "Move Mouse Around...");
-
         for i,v in pairs(_G.Offset.OldPositions) do
             if dx9.GetImageLabelPosition(i).x ~= v then _G.Offset.NewMouse = i end
         end
@@ -71,7 +70,13 @@ if #_G.Offset.Descendants > 0 then
         dx9.SetAimbotValue("x", 0);
         dx9.SetAimbotValue("y", 0);
     else
-    
+        --// Notify That Calibrated
+        if not _G.Offset.Notified then
+            Lib:Notify("Calibration Complete!", 3)
+            Lib:Notify("Press [F5] to Re-Calibrate", 3)
+            _G.Offset.Notified = true
+        end
+
         --// Adjusting Aim if cursor detected
         local pos = dx9.GetImageLabelPosition(_G.Offset.NewMouse)
 
@@ -82,5 +87,5 @@ else
     dx9.SetAimbotValue("x", 0);
     dx9.SetAimbotValue("y", 0);
 
-    dx9.DrawString({Mouse.x + 3, Mouse.y - 15}, {255,255,255}, "No UI Elements Found!");
+    dx9.DrawString({Mouse.x + 3, Mouse.y - 15}, {255,255,255}, "No UI Elements Found, Calibration Failed!");
 end
