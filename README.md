@@ -1,3 +1,12 @@
+---
+
+## Universal Cursor Offset
+```lua
+loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/UniversalOffset.lua"))()
+```
+
+---
+
 ## Rush Point UI
 **Features**
 - Player ESP
