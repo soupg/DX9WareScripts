@@ -21,7 +21,7 @@ function GetDescendants(instance)
             local x = (Mouse.x - v.x) * (Mouse.x - v.x)
             local y = (Mouse.y - v.y) * (Mouse.y - v.y)
 
-            if math.floor(math.sqrt(x + y)) < 100 then
+            if math.floor(math.sqrt(x + y)) < 500 then
                 return true
             end
         end
@@ -73,7 +73,7 @@ if #_G.Offset.Descendants > 0 then
         end
 
         for i,v in pairs(_G.Offset.OldPositions) do
-            if dx9.GetImageLabelPosition(i).x ~= v and FovCheck(i) < 100 then 
+            if dx9.GetImageLabelPosition(i).x ~= v and FovCheck(i) < 500 then 
                 _G.Offset.NewMouse = i 
             end
         end
