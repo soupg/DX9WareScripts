@@ -6,9 +6,11 @@ local Lib = loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DXLibUI/
 local Mouse = dx9.GetMouse();
 local gui_path = dx9.FindFirstChildOfClass(dx9.FindFirstChild(dx9.FindFirstChildOfClass(dx9.GetDatamodel(), "Players"), dx9.get_localplayer().Info.Name), "PlayerGui")
 
-if Lib.Key == "[F5]" and _G.Offset ~= nil then
-    _G.Offset = nil;
+if Lib.Key == "[F5]" and _G.supg ~= nil then
+    Lib:Notify("Recalibrating...", 2)
+    _G.supg = nil;
 end
+
 
 --// Get Descendants (which are image lables)
 function GetDescendants(instance)
@@ -44,59 +46,57 @@ function GetDescendants(instance)
     return children
 end
 
---// Initiates Variables
-if _G.Offset == nil then
-    Lib:Notify("Calibrating offset, please move your mouse around", 3)
-    
-    _G.Offset = {
-        Descendants = GetDescendants(gui_path);
-        NewMouse = nil;
-        OldPositions = {};
-        Notified = false;
-    }
 
-    for i,v in pairs(_G.Offset.Descendants) do
-        _G.Offset.OldPositions[v] = dx9.GetImageLabelPosition(v).x
-    end
+if _G.supg == nil then
+    _G.supg = {
+        Offset = nil;
+        OldMouse = nil;
+        OldPos = {};
+    }
 end
 
---// Determines which ImageLabel moves with mouse
-if #_G.Offset.Descendants > 0 then
-    if _G.Offset.NewMouse == nil then 
+local Offset = _G.supg.Offset
+local OldMouse = _G.supg.OldMouse
+local OldPos = _G.supg.OldPos
 
-        function FovCheck(v)
-            local v = dx9.GetImageLabelPosition(v)
-            local x = (Mouse.x - v.x) * (Mouse.x - v.x)
-            local y = (Mouse.y - v.y) * (Mouse.y - v.y)
-    
-            return math.floor(math.sqrt(x + y))
-        end
+local desc = GetDescendants(gui_path)
 
-        for i,v in pairs(_G.Offset.OldPositions) do
-            if dx9.GetImageLabelPosition(i).x ~= v and FovCheck(i) < 500 then 
-                _G.Offset.NewMouse = i 
-            end
-        end
-
-        dx9.SetAimbotValue("x", 0);
-        dx9.SetAimbotValue("y", 0);
-    else
-        --// Notify That Calibrated
-        if not _G.Offset.Notified then
-            Lib:Notify("Calibration Complete!", 3)
-            Lib:Notify("Press [F5] to Re-Calibrate", 3)
-            _G.Offset.Notified = true
-        end
-
-        --// Adjusting Aim if cursor detected
-        local pos = dx9.GetImageLabelPosition(_G.Offset.NewMouse)
-
-        dx9.SetAimbotValue("x", pos.x - Mouse.x);
-        dx9.SetAimbotValue("y", pos.y - Mouse.y);
-    end
-else
+if Offset == nil and OldMouse ~= nil then
     dx9.SetAimbotValue("x", 0);
     dx9.SetAimbotValue("y", 0);
 
-    dx9.DrawString({Mouse.x + 3, Mouse.y - 15}, {255,255,255}, "No UI Elements Found, Calibration Failed!");
+    for i,v in next, OldPos do
+        --if ((dx9.GetImageLabelPosition(i).x < v.x and Mouse.x < OldMouse.x) or (dx9.GetImageLabelPosition(i).x > v.x and Mouse.x > OldMouse.x)) and ((dx9.GetImageLabelPosition(i).y < v.y and Mouse.y < OldMouse.y) or (dx9.GetImageLabelPosition(i).y > v.y and Mouse.y > OldMouse.y)) then 
+        if (dx9.GetImageLabelPosition(i).x ~= v.x or dx9.GetImageLabelPosition(i).y ~= v.y) and (OldMouse.x - Mouse.x == v.x - dx9.GetImageLabelPosition(i).x) and (OldMouse.y - Mouse.y == v.y - dx9.GetImageLabelPosition(i).y) then
+            Lib:Notify("Crosshair Found! | Press [F5] to recalibrate", 3)
+            Offset = i 
+            break
+        end
+    end
+elseif Offset ~= nil then
+    
+    --// Adjusting Aim if cursor detected
+    local pos = dx9.GetImageLabelPosition(Offset)
+
+    dx9.SetAimbotValue("x", pos.x - Mouse.x);
+    dx9.SetAimbotValue("y", pos.y - Mouse.y);
+else
+    dx9.SetAimbotValue("x", 0);
+    dx9.SetAimbotValue("y", 0);
 end
+
+--// Storing Values
+OldMouse = Mouse
+
+local reset = true
+for _,v in pairs(desc) do
+    if Offset ~= nil and v == Offset then reset = false end
+
+    OldPos[v] = dx9.GetImageLabelPosition(v)
+end
+
+if reset then Offset = nil end
+
+_G.supg.Offset = Offset
+_G.supg.OldMouse = OldMouse
+_G.supg.OldPos = OldPos
