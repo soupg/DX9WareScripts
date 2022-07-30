@@ -9,6 +9,7 @@ loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/
 **Features**
 - Player ESP
 - Player Aimbot
+
 **Notes**
 Make sure the script is not turned on in the lobby (or it will crash)!
 ```lua
