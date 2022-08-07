@@ -48,3 +48,14 @@ loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/
 ```
 
 ---
+
+## Sets Ping Adjust
+- Supports custom sets (any size)
+- Supports custom keybinds
+- Coded for dummies, easy to edit script with lots of comments!
+
+```lua
+loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/PingAdjust.lua"))()
+```
+
+---
