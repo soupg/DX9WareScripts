@@ -49,7 +49,7 @@ loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DX9WareScripts/main/
 
 ---
 
-## Sets Ping Adjust
+## Ping Adjust (for DaHood sets)
 - Supports custom sets (any size)
 - Supports custom keybinds
 - Coded for dummies, easy to edit script with lots of comments!
