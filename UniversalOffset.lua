@@ -78,8 +78,6 @@ if Offset == nil then
         --// Returns descendants
         return children
     end
-
-    local desc = GetDescendants(dx9.FindFirstChildOfClass(dx9.FindFirstChild(dx9.FindFirstChildOfClass(dx9.GetDatamodel(), "Players"), dx9.get_localplayer().Info.Name), "PlayerGui")) 
 end
 
 if Offset == nil and OldMouse ~= nil then
@@ -105,22 +103,17 @@ else
     dx9.SetAimbotValue("y", 0)
 end
 
-
-
-
 if Offset == nil then
 
     --// Storing Values
     OldMouse = dx9.GetMouse()
 
     --local reset = true
-    for _,v in pairs(desc) do
+    for _,v in pairs(GetDescendants(dx9.FindFirstChildOfClass(dx9.FindFirstChild(dx9.FindFirstChildOfClass(dx9.GetDatamodel(), "Players"), dx9.get_localplayer().Info.Name), "PlayerGui"))) do
         --if Offset ~= nil and v == Offset then reset = false end
 
         OldPos[v] = dx9.GetImageLabelPosition(v)
     end
-
-    --if reset then Offset = nil end
 end
 
 _G.supg.Offset = Offset
