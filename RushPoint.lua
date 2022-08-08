@@ -292,8 +292,9 @@ if fov_circle.Value then
     dx9.DrawCircle({Mouse.x, Mouse.y}, fov_color.Value, fov.Value)
 end
 
-dx9.FirstPersonAim(Target.Position, smoothness.Value, 1)
-
+if aimbot.Value then
+    dx9.FirstPersonAim(Target.Position, smoothness.Value, 1)
+end
 
 --// Library Loaded
 if Lib.FirstRun then Lib:Notify("Script Loaded!", 2) end
