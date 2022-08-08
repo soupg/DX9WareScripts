@@ -2,15 +2,17 @@
 
 --// Library
 local Lib = loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DXLibUI/main/main.lua"))()
+
 local Window = Lib:CreateWindow({Title = "Rushpoint UI | Made by supg", Size = {500,500}, Resizable = true, ToggleKey = "[F5]" })
 
 --// Tabs
-local Tab1 = Window:AddTab("Main")
+local Tab1 = Window:AddTab("ESP")
+local Tab2 = Window:AddTab("Aimbot")
 
 --// Groupboxes
-local Groupbox1 = Tab1:AddGroupbox("Aimbot", "left")
-local Groupbox2 = Tab1:AddGroupbox("ESP", "right")
+local Groupbox2 = Tab1:AddGroupbox("ESP", "left")
 
+local Groupbox1 = Tab2:AddGroupbox("Aimbot", "left")
 
 
 --// AIMBOT SECTION //--
@@ -24,13 +26,12 @@ local teamcheck = Groupbox1:AddToggle({Text = "TeamCheck Enabled"}):OnChanged(fu
 end)
 
 --// Smoothness 
-local smoothness = Groupbox1:AddSlider({Text = "Aimbot Smoothness", Default = 1, Min = 1, Max = 30})
+local smoothness = Groupbox1:AddSlider({Text = "Aimbot Smoothness", Default = 1, Min = 1, Max = 50})
 
 --// Aimpart 
-local aimpart = Groupbox1:AddSlider({Text = "Aimpart", Default = 1, Min = 1, Max = 2}):OnChanged(function(value)
-    if value == 1 then Lib:Notify("Aimpart: Head", 1) else Lib:Notify("Aimpart: Torso", 1) end
+local aimpart = Groupbox1:AddDropdown({Text = "Aimpart", Default = 1, Values = {"Head", "Torso"}}):OnChanged(function(value)
+    Lib:Notify("Aimpart: "..value, 1)
 end)
-Groupbox1:AddLabel("1: Head | 2: Torso")
 
 
 Groupbox1:AddBlank(7)
@@ -46,7 +47,6 @@ end)
 local fov = Groupbox1:AddSlider({Text = "FOV Size", Default = 100, Min = 10, Max = 300})
 
 local fov_color = Groupbox1:AddColorPicker({Default = {255,255,255}, Text = "FOV Circle Color"})
-
 
 
 --// ESP SECTION //--
@@ -268,7 +268,7 @@ for i,v in pairs(dx9.GetChildren(Players)) do
     local root = dx9.FindFirstChild(v, "HumanoidRootPart")
 
     local TargetPart = "Head"
-    if aimpart.Value == 2 then 
+    if aimpart.ValueIndex == 2 then 
         TargetPart = "HumanoidRootPart"
     end
 
