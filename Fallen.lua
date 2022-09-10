@@ -2,7 +2,9 @@
 local Workspace = dx9.FindFirstChildOfClass(dx9.GetDatamodel(), "Workspace")
 local Players = dx9.FindFirstChildOfClass(dx9.GetDatamodel(), "Players")
 local LocalPlayer = dx9.get_localplayer()
+local LocalCharacter = dx9.GetCharacter(dx9.FindFirstChild(dx9.FindFirstChildOfClass(dx9.GetDatamodel(), "Players"), dx9.get_localplayer().Info.Name))
 local Mouse = dx9.GetMouse()
+local Looktarget = dx9.GetTarget()
 
 --// Library
 local Lib = loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DXLibUI/main/main.lua"))()
@@ -12,18 +14,28 @@ local Window = Lib:CreateWindow({Title = "Fallen UI | Made by supg", Size = {500
 
 --/ Tabs
 local Tab1 = Window:AddTab("Player ESP")
+local Tab12 = Window:AddTab("Aimbot")
 local Tab2 = Window:AddTab("Item ESP")
 local Tab3 = Window:AddTab("Code Guesser")
+local Tab4 = Window:AddTab("Misc")
 
 --/ Groupboxes
+
+-- Player ESP Tab
 local Groupbox1 = Tab1:AddLeftGroupbox("Player ESP")
 local Groupbox11 = Tab1:AddRightGroupbox("ESP Configuration")
 
+-- Item ESP Tab
 local Groupbox2 = Tab2:AddLeftGroupbox("Spawned Items") 
 local Groupbox3 = Tab2:AddRightGroupbox("Deployables")
 local Groupbox4 = Tab2:AddRightGroupbox("Dropped Items")
 
+-- Code Guesser Tab
 local Groupbox5 = Tab3:AddMiddleGroupbox("Code Guesser")
+
+-- Aimbot Tab
+local Groupbox6 = Tab12:AddRightGroupbox("Bow Aimbot")
+local Groupbox7 = Tab12:AddLeftGroupbox("Aimbot Settings")
 
 --// Code Guesser
 if Lib.KeyLocations == nil then 
@@ -55,7 +67,7 @@ if _G.Timer.Start ~= nil then
         dx9.DrawString({v[1], v[2] - 30}, {255, 255, 255}, i)
     end
 
-    if _G.Timer.Frame > 3 then
+    if _G.Timer.Frame > 10 then
         _G.Timer.Frame = 0
     else
         _G.Timer.Frame = _G.Timer.Frame + 1
@@ -98,9 +110,13 @@ if _G.Timer.Start ~= nil then
     end
 end
 
+local guess_code_toggle = Groupbox5:AddToggle({Default = false, Text = "Enabled"}):OnChanged(function(value)
+    if value then Lib:Notify("Guesser Enabled", 1) else Lib:Notify("Guesser Disabled", 1) end
+end)
+
 --// Start Guess
 if Lib.Key == "[F]" then
-    if _G.Timer.Start == nil then _G.Timer.Start = true end
+    if _G.Timer.Start == nil and guess_code_toggle.Value then _G.Timer.Start = true end
 end
 
 local input = Lib.code_table[Lib.CodeIndex]
@@ -110,8 +126,10 @@ if _G.Timer.Start ~= nil then
 end
 
 Groupbox5:AddButton("Guess Code [F]  |  "..input, function()
-    if _G.Timer.Start == nil then _G.Timer.Start = true end
-    Lib:Notify("Guessing Code ["..Lib.code_table[Lib.CodeIndex].."]", 1)
+    if _G.Timer.Start == nil and guess_code_toggle.Value then 
+        _G.Timer.Start = true 
+        Lib:Notify("Guessing Code ["..Lib.code_table[Lib.CodeIndex].."]", 1)
+    end
 end)
 
 Groupbox5:AddBlank(5)
@@ -143,6 +161,8 @@ Groupbox5:AddLabel(Lib.code_table[Lib.CodeIndex + 2], {100,255,100})
 
 Groupbox5:AddLabel("Green: New Codes\nRed: Used Codes", {255,150,100})
 
+Groupbox5:AddLabel("Codes Guessed: "..Lib.CodeIndex, {255,255,255})
+
 
 
 --// Players ESP
@@ -162,7 +182,7 @@ local healthbar = Groupbox1:AddToggle({Default = true, Text = "Healthbar"}):OnCh
     if value then Lib:Notify("Healthbar Enabled", 1) else Lib:Notify("Healthbar Disabled", 1) end
 end)
 
-local esp_color = Groupbox1:AddColorPicker({Default = {255, 255, 255}, Text = "ESP Color"})
+local esp_color = Groupbox1:AddColorPicker({Index = "123", Default = {255, 255, 255}, Text = "ESP Color"})
 
 --/ ESP Range
 local esp_range = Groupbox1:AddSlider({Default = 1000, Text = "ESP Range", Min = 0, Max = 5000})
@@ -172,10 +192,6 @@ Groupbox1:AddTitle("Tracers")
 
 local tracer = Groupbox1:AddToggle({Default = true, Text = "Tracers"}):OnChanged(function(value)
     if value then Lib:Notify("Tracers Enabled", 1) else Lib:Notify("Tracers Disabled", 1) end
-end)
-
-local target_tracer = Groupbox1:AddToggle({Default = true, Text = "Aimbot Target Tracer"}):OnChanged(function(value)
-    if value then Lib:Notify("Target Tracer Enabled", 1) else Lib:Notify("Target Tracer Disabled", 1) end
 end)
 
 
@@ -191,26 +207,181 @@ end)
 
 
 --// Spawned Items ESP
+local node_esp = Groupbox2:AddToggle({Default = false, Text = "Node ESP"}):OnChanged(function(value)
+    if value then Lib:Notify("Node ESP Enabled", 1) else Lib:Notify("Node ESP Disabled", 1) end
+end)
+
+local barrel_esp = Groupbox2:AddToggle({Default = false, Text = "Barrel ESP"}):OnChanged(function(value)
+    if value then Lib:Notify("Barrel ESP Enabled", 1) else Lib:Notify("Barrel ESP Disabled", 1) end
+end)
+
+local crate_esp = Groupbox2:AddToggle({Default = false, Text = "Crate ESP"}):OnChanged(function(value)
+    if value then Lib:Notify("Crate ESP Enabled", 1) else Lib:Notify("Crate ESP Disabled", 1) end
+end)
+
+local airdrop_esp = Groupbox2:AddToggle({Default = false, Text = "Airdrop ESP"}):OnChanged(function(value)
+    if value then Lib:Notify("Airdrop ESP Enabled", 1) else Lib:Notify("Airdrop ESP Disabled", 1) end
+end)
+
+local dist_limit = Groupbox2:AddSlider({Default = 300, Text = "Spawned Item ESP Range", Min = 0, Max = 5000}).Value
 
 --// Deployables ESP
+Groupbox3:AddButton("Scan For Nearby Bases", function()
+    local bases = dx9.FindFirstChild(Workspace, "Bases")
+    _G.Lib.Bases = {}
+
+    for _, v in next, dx9.GetChildren(bases) do
+        if dx9.FindFirstChild(v, "Tool Cupboard") ~= 0 then
+            local tc = dx9.FindFirstChild(v, "Tool Cupboard")
+            local tc_root = dx9.FindFirstChild(tc, "Main")
+
+            if DistFromPlr(tc_root) < 300 then
+                table.insert(_G.Lib.Bases, v)
+            end
+        end
+    end
+end)
+
+local deployable_esp = Groupbox3:AddToggle({Default = false, Text = "Deployable ESP"}):OnChanged(function(value)
+    if value then Lib:Notify("Deployable ESP Enabled", 1) else Lib:Notify("Deployable ESP Disabled", 1) end
+end)
+
+local hide_doors = Groupbox3:AddToggle({Default = false, Text = "Hide Doors"}):OnChanged(function(value)
+    if value then Lib:Notify("Doors Hidden", 1) else Lib:Notify("Doors Shown", 1) end
+end)
+
+
+if deployable_esp.Value and _G.Lib.Bases ~= nil and #_G.Lib.Bases > 0 then
+    
+    local blacklist = {
+        ["Wall"] = true;
+        ["Roof"] = true;
+        ["TriangleRoof"] = true;
+        ["TriangleFoundation"] = true;
+        ["Doorway"] = true;
+        ["WallFrame"] = true;
+        ["Foundation"] = true;
+        ["HalfWall"] = true;
+        ["Window"] = true;
+        ["FoundationSteps"] = true;
+    }
+
+    local colors = {
+        ["Tool Cupboard"] = {255, 255, 100};
+
+        ["Large Storage Box"] = {200, 100, 0};
+        ["Furnace"] = {150, 100, 50};
+
+        ["Garage Door"] = {50, 150, 200};
+        ["Wooden Door"] = {50, 150, 200};
+        ["Sheet Metal Door"] = {50, 150, 200};
+        ["Armored Door"] = {50, 150, 200};
+        ["Sheet Metal Double Door"] = {50, 150, 200};
+        ["Wooden Double Door"] = {50, 150, 200};
+        ["Armored Double Door"] = {50, 150, 200};
+
+        ["Sleeping Bag"] = {50, 200, 100};
+
+        ["Tier 3 Workbench"] = {200, 100, 100};
+        ["Tier 2 Workbench"] = {200, 100, 100};
+        ["Tier 1 Workbench"] = {200, 100, 100};
+    }
+
+    local doors = {
+        ["Garage Door"] = true;
+        ["Wooden Door"] = true;
+        ["Sheet Metal Door"] = true;
+        ["Armored Door"] = true;
+        ["Sheet Metal Double Door"] = true;
+        ["Wooden Double Door"] = true;
+        ["Armored Double Door"] = true;
+    }
+
+    --// Deployable ESP
+    for _, v in next, _G.Lib.Bases do
+        for _, f in next, dx9.GetChildren(v) do
+            local name = dx9.GetName(f)
+            if dx9.FindFirstChild(f, "Main") and blacklist[name] == nil then
+                if not hide_doors.Value or (hide_doors.Value and (doors[name] == nil)) then
+                    local root = dx9.FindFirstChild(f, "Main")
+                    local pos = dx9.GetPosition(root)
+                    local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
+
+                    local color = {100,100,100}
+
+                    if colors[name] then color = colors[name] end
+
+                    if wts.x > 0 and wts.y > 0 then
+                        --dx9.DrawCircle({wts.x, wts.y}, {0,0,0}, 3)
+                        --dx9.DrawCircle({wts.x, wts.y}, color, 1)
+                        dx9.DrawString({wts.x, wts.y - 13}, color, name)
+                    end
+                end
+            end
+        end
+    end
+end
+
 
 --// Dropped Items ESP
+local dropped_items = Groupbox4:AddToggle({Default = false, Text = "Dropped Items ESP"}):OnChanged(function(value)
+    if value then Lib:Notify("Dropped Items ESP Enabled", 1) else Lib:Notify("Dropped Items ESP Disabled", 1) end
+end)
 
+--// Bow Aimbot
+local bow_aimbot = Groupbox6:AddToggle({Default = false, Text = "Enabled"}):OnChanged(function(value)
+    if value then Lib:Notify("Bow Aimbot Enabled", 1) else Lib:Notify("Bow Aimbot Disabled", 1) end
+end)
 
+local bow_multiplier = Groupbox6:AddSlider({Default = 15, Text = "Prediction Value", Min = 0, Max = 100}).Value
+bow_multiplier = bow_multiplier / 10
 
+--// Player Aimbot
+local aimbot_enabled = Groupbox7:AddToggle({Default = true, Text = "Enabled", Index = "AimbotEnabled"}):OnChanged(function(value)
+    if value then Lib:Notify("Aimbot Enabled", 1) else Lib:Notify("Aimbot Disabled", 1) end
+end)
 
+local target_tracer = Groupbox7:AddToggle({Default = true, Text = "Target Tracer"}):OnChanged(function(value)
+    if value then Lib:Notify("Target Tracer Enabled", 1) else Lib:Notify("Target Tracer Disabled", 1) end
+end)
 
+local aim_dot = Groupbox7:AddToggle({Default = true, Text = "Aim Dot"}):OnChanged(function(value)
+    if value then Lib:Notify("Aim Dot Enabled", 1) else Lib:Notify("Aim Dot Disabled", 1) end
+end)
+
+local aimpart = Groupbox7:AddDropdown({Text = "Aim Target", Default = 1, Values = {"Head", "Torso"}}):OnChanged(function(value)
+    Lib:Notify("Aim Target: "..value, 1)
+end)
+
+if aimpart.ValueIndex == 1 then 
+    aimpart = "Head" 
+else 
+    aimpart = "HumanoidRootPart" 
+end
+
+Groupbox7:AddTitle("Fov Circle")
+
+local fov_circle_enabled = Groupbox7:AddToggle({Default = true, Text = "Enabled", Index = "FovEnabled123"}):OnChanged(function(value)
+    if value then Lib:Notify("FOV Enabled", 1) else Lib:Notify("FOV Disabled", 1) end
+end)
+
+local fov = Groupbox7:AddSlider({Default = 70, Text = "Aimbot FOV", Min = 10, Max = 1000})
+
+if fov_circle_enabled.Value then
+    dx9.DrawCircle({Mouse.x, Mouse.y}, {255,255,255}, fov.Value)
+end
+
+Groupbox7:AddLabel("Warning: Aimbot range\nsynced with ESP range", {255, 255, 100})
 
 
 --// Funcs
-function GetDistanceFromPlayer(v)
-    local v1 = dx9.get_localplayer().Position;
-    local v2 = v
-
-    local a = (v1.x - v2.x) * (v1.x - v2.x);
-    local b = (v1.y - v2.y) * (v1.y - v2.y);
-    local c = (v1.z - v2.z) * (v1.z - v2.z);
-    return math.floor(math.sqrt(a + b + c) + 0.5);
+function DistFromPlr(v)
+    local v1 = LocalPlayer.Position
+    local v2 = dx9.GetPosition(v)
+    local a = (v1.x-v2.x)*(v1.x-v2.x)
+    local b = (v1.y-v2.y)*(v1.y-v2.y)
+    local c = (v1.z-v2.z)*(v1.z-v2.z)
+    return math.floor(math.sqrt(a+b+c)+0.5)
 end
 
 
@@ -250,8 +421,10 @@ function BoxESP(target)
 
     --// Error Handling
     assert(type(target) == "number" and dx9.GetChildren(target) ~= nil, "[Error] BoxESP: Target Argument needs to be a number (pointer) to character!")
+    local humanoid = dx9.FindFirstChild(target, "Humanoid")
+    local hp = dx9.GetHealth(humanoid)
 
-    if dx9.FindFirstChild(target, "HumanoidRootPart") and dx9.GetPosition(dx9.FindFirstChild(target, "HumanoidRootPart")) then
+    if dx9.FindFirstChild(target, "HumanoidRootPart") and dx9.GetPosition(dx9.FindFirstChild(target, "HumanoidRootPart")) and hp > 0 then
         local torso = dx9.GetPosition(dx9.FindFirstChild(target, "HumanoidRootPart"))
 
         local HeadPosY = torso.y + 2.5
@@ -266,7 +439,7 @@ function BoxESP(target)
         width = width / 1.2
 
         --// Draw Box
-        if box_type.ValueIndex == 1 then --// cormers
+        if box_type.ValueIndex == 1 then --// cormers   
             dx9.DrawLine({Top.x + width + 2, Top.y}, {Top.x + (width/2) + 2, Top.y}, esp_color.Value) -- TopLeft 1
             dx9.DrawLine({Top.x + width + 2, Top.y}, {Top.x + width + 2, Top.y - (height/4)}, esp_color.Value) -- TopLeft 2
 
@@ -307,12 +480,15 @@ function BoxESP(target)
         end
 
         if distance.Value then
-            local dist = ""..GetDistanceFromPlayer(torso)
+            local dist = ""..DistFromPlr(dx9.FindFirstChild(target, "HumanoidRootPart"))
             dx9.DrawString({Bottom.x - (dx9.CalcTextWidth(dist) / 2), Bottom.y}, esp_color.Value, dist)
         end
 
         if nametag.Value then
             local name = dx9.GetName(target)
+            
+            if dx9.FindFirstChildOfClass(target, "Model") ~= 0 then name = name.." ["..dx9.GetName(dx9.FindFirstChildOfClass(target, "Model")).."]" end
+
             dx9.DrawString({Top.x - (dx9.CalcTextWidth(name) / 2), Top.y - 20}, esp_color.Value, name)
         end
 
@@ -340,45 +516,182 @@ end
 
 
 
+--// Spawned ESP
+for _, p in next, dx9.GetChildren(dx9.FindFirstChild(Workspace, "Resources")) do
+
+    if node_esp.Value and dx9.GetName(p) == "Nodes" then
+        for _, v in next, dx9.GetChildren(p) do
+            local root = dx9.FindFirstChild(v, "Main")
+            local pos = dx9.GetPosition(root)
+            local name = dx9.GetName(v)
+            local dist = DistFromPlr(root)
+            
+            if dist < dist_limit then 
+                local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
+                local color = {255, 200, 100}
+                
+                if dx9.GetName(v) == "RockNode" then
+                    color = {100, 100, 100}
+                elseif dx9.GetName(v) == "MetalNode" then
+                    color = {255, 100, 100}
+                end
+    
+                if wts.x > 0 and wts.y > 0 then
+                    dx9.DrawCircle({wts.x, wts.y}, {0,0,0}, 3)
+                    dx9.DrawCircle({wts.x, wts.y}, color, 1)
+                    dx9.DrawString({wts.x + 5, wts.y - 13}, color, name.." ["..dist.."]")
+                end
+            end
+        end
+    end
+
+    if barrel_esp.Value and dx9.GetName(p) == "Barrels"  then    
+        for _, v in next, dx9.GetChildren(p) do
+            local root = dx9.FindFirstChild(v, "Main")
+            local pos = dx9.GetPosition(root)
+            local name = dx9.GetName(v)
+            local dist = DistFromPlr(root)
+            
+            if dist < dist_limit then         
+                local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
+                local color = {200, 200, 100}
+    
+                if wts.x > 0 and wts.y > 0 then
+                    dx9.DrawCircle({wts.x, wts.y}, {0,0,0}, 3)
+                    dx9.DrawCircle({wts.x, wts.y}, color, 1)
+                    dx9.DrawString({wts.x + 5, wts.y - 13}, color, name.." ["..dist.."]")
+                end
+            end
+        end
+    end
+
+    if crate_esp.Value and dx9.GetName(p) == "Crates"  then    
+        for _, v in next, dx9.GetChildren(p) do
+            local root = dx9.FindFirstChild(v, "Main")
+            local pos = dx9.GetPosition(root)
+            local name = "Crate"
+            local dist = DistFromPlr(root)
+    
+            if dist < dist_limit then         
+                local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
+                local color = {100, 200, 100}
+    
+                if wts.x > 0 and wts.y > 0 then
+                    dx9.DrawCircle({wts.x, wts.y}, {0,0,0}, 3)
+                    dx9.DrawCircle({wts.x, wts.y}, color, 1)
+                    dx9.DrawString({wts.x + 5, wts.y - 13}, color, name.." ["..dist.."]")
+                end
+            end
+        end
+    end
+end
+
+
+if airdrop_esp.Value then
+    for _, v in next, dx9.GetChildren(dx9.FindFirstChild(Workspace, "Events")) do
+        if dx9.GetName(v) == "Thingy30" and dx9.FindFirstChild(v, "Empty") and dx9.GetBoolValue(dx9.FindFirstChild(v, "Empty")) ~= false then
+            local root = dx9.FindFirstChild(v, "Main")
+            local pos = dx9.GetPosition(root)
+            local name = "Airdrop"
+            local dist = DistFromPlr(root)
+
+            if dist < dist_limit then         
+                local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
+                local color = {255, 255, 50}
+    
+                if wts.x > 0 and wts.y > 0 then
+                    dx9.DrawCircle({wts.x, wts.y}, {0,0,0}, 3)
+                    dx9.DrawCircle({wts.x, wts.y}, color, 1)
+                    dx9.DrawString({wts.x + 5, wts.y - 13}, color, name.." ["..dist.."]")
+                end
+            end
+        end
+    end
+end
+
+
+
+
+
 --// Actual Script //--
 
---// ESP and Target Tracer
-for i,v in pairs(dx9.GetChildren(Workspace)) do
-    if dx9.FindFirstChild(v, "HumanoidRootPart") ~= nil then
-        local local_team = dx9.GetTeam(dx9.get_player(LocalPlayer.Info.Name))
-        local v_team = dx9.GetTeam(dx9.get_player(dx9.GetName(v)))
 
-        if ((v_team == nil or local_team == nil) or (v_team ~= local_team)) and GetDistanceFromPlayer(dx9.GetPosition(dx9.FindFirstChild(v, "HumanoidRootPart"))) <= esp_range.Value then -- Might need to fix team check
+--// ESP and Target Tracer
+local target = {Wts = nil, Dist = 9999, Pos = nil, Vel = nil, Pointer = nil}
+
+for _, v in next, dx9.GetChildren(Workspace) do
+    if dx9.FindFirstChild(v, "ID") and dropped_items.Value and dx9.FindFirstChild(v, "HumanoidRootPart") == 0 then
+
+        --// Dropped Item ESP
+        local pos = dx9.GetPosition(dx9.FindFirstChildOfClass(v, "MeshPart"))
+        local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
+
+        if wts.x > 0 and wts.y > 0 and DistFromPlr(dx9.FindFirstChild(v, "Handle")) < dist_limit then
+            dx9.DrawCircle({wts.x,wts.y}, {0,0,0}, 3);
+            dx9.DrawCircle({wts.x,wts.y}, {100,200,0}, 1);
+
+            dx9.DrawString({wts.x+5, wts.y-15}, {100,200,0}, dx9.GetName(v).." ["..DistFromPlr(dx9.FindFirstChild(v, "Handle")).."]");
+        end
+
+    elseif dx9.FindFirstChild(v, "HumanoidRootPart") ~= 0 and dx9.FindFirstChild(v, "Humanoid") ~= 0 and dx9.FindFirstChild(v, "DroppedBag") == 0 then
+        if DistFromPlr(dx9.FindFirstChild(v, "HumanoidRootPart")) <= esp_range.Value then
+
+            --// Setting Target
+            local pos = dx9.GetPosition(dx9.FindFirstChild(v, aimpart))
+            local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
+
+            local dist = math.floor(math.sqrt(((Mouse.x - wts.x) * (Mouse.x - wts.x)) + ((Mouse.y - wts.y) * (Mouse.y - wts.y))))
+
+            if (Lib.LockedPlr ~= nil and Lib.LockedPlr == dx9.FindFirstChild(v, aimpart)) or (Lib.LockedPlr == nil and dist < fov.Value and dist < target.Dist and (dx9.GetName(v) ~= LocalPlayer.Info.Name)) then -- and (dx9.GetNumValue(local_team) ~= dx9.GetNumValue(v_team)) then
+                target.Dist = dist
+                target.Wts = wts
+                target.Vel = dx9.GetVelocity(dx9.FindFirstChild(v, aimpart))
+                target.Pos = pos
+                target.Pointer = dx9.FindFirstChild(v, aimpart)
+            end
 
             --// Player ESP
             if esp.Value and (dx9.GetName(v) ~= LocalPlayer.Info.Name) then
                 BoxESP(v)
             end
         end
-
-    elseif dx9.FindFirstChildOfClass(v, "MeshPart") and dx9.FindFirstChild(v, "HumanoidRootPart") == nil then
-
-        --// Dropped Item ESP
-        local pos = dx9.GetPosition(dx9.FindFirstChildOfClass(v, "MeshPart"))
-        local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
-        if wts.x > 0 and wts.y > 0 then--and distLimit > GetDistanceFromPlayer(pos) then
-            local espColor2 = {255, 100, 255}
-            dx9.DrawCircle({wts.x,wts.y}, {0,0,0}, 3);
-            dx9.DrawCircle({wts.x,wts.y}, espColor2, 1);
-
-            dx9.DrawString({wts.x+5, wts.y-15}, espColor2, dx9.GetName(v).." ["..GetDistanceFromPlayer(pos).."]");
-        end
     end
 end
 
---// Target Tracer
-if dx9.GetLocked() ~= 0 then
-    local pos = dx9.GetPosition(dx9.GetLocked())
-    local wts = dx9.WorldToScreen({pos.x, pos.y, pos.z})
 
-    local diff = math.floor(math.sqrt(((Mouse.x - wts.x) * (Mouse.x - wts.x)) + ((Mouse.y - wts.y) * (Mouse.y - wts.y))))
+--// Aimbot
+if target.Wts ~= nil and aimbot_enabled.Value then
+    local wts = target.Wts
 
-    if target_tracer.Value and diff <= dx9.GetAimbotValue("fov") and GetDistanceFromPlayer(pos) < dx9.GetAimbotValue("range") then 
+    if target_tracer.Value then 
         dx9.DrawLine({Mouse.x, Mouse.y}, {wts.x, wts.y}, {255,255,255})
     end
+
+    if dx9.FindFirstChild(LocalCharacter, "Wooden Bow") ~= 0 and bow_aimbot.Value then
+        local pos = dx9.GetPosition(target.Pointer)
+        local vel = dx9.GetVelocity(target.Pointer)
+
+        local range = DistFromPlr(target.Pointer)
+
+        wts = dx9.WorldToScreen({pos.x + (vel.z/(7 / bow_multiplier)) * (range/80), pos.y + (vel.y/(90)) + (range/60)  * (range/70), pos.z + (vel.x/(7 / bow_multiplier)) * (range/80) })
+    end
+
+    if aim_dot.Value then
+        dx9.DrawCircle({wts.x, wts.y}, {0,0,0}, 3)
+        dx9.DrawCircle({wts.x, wts.y}, {255,255,255}, 1)
+    end
+
+    if dx9.isRightClickHeld() then
+        Lib.LockedPlr = target.Pointer
+        dx9.FirstPersonAim({wts.x, wts.y}, 1, 1)
+    else
+        Lib.LockedPlr = nil
+    end
+else
+    Lib.LockedPlr = nil
+end
+
+--// FirstRun
+if Lib.FirstRun then 
+    dx9.SetAimbotValue("range", 9999)
 end
