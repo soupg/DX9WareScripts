@@ -1,4 +1,4 @@
--- // DaHood Ping To Prediciton Increment Thing - supg#2289 //--
+-- // DaHood Ping To Prediciton Thing - supg#2289 //--
 
 -- // This table can be expanded / lowered / replaced.
 local sets = {
