@@ -16,10 +16,10 @@ local sets = {
 local ping = dx9.GetPing()
 loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DXLibUI/main/main.lua"))() --// To make loadstrings work
 
-local smallestSoFar, prediction
+local smallest_diff, prediction
 for i, y in pairs(sets) do
-  if not smallestSoFar or (math.abs(ping - i) < smallestSoFar) then
-    smallestSoFar = math.abs(ping - i)
+  if not smallest_diff or (math.abs(ping - i) < smallest_diff) then
+    smallest_diff = math.abs(ping - i)
     prediction = sets[i]
   end
 end
