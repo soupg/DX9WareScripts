@@ -14,6 +14,7 @@ local sets = {
 
 -- // Actual Script //--
 local ping = dx9.GetPing()
+loadstring(dx9.Get("https://raw.githubusercontent.com/soupg/DXLibUI/main/main.lua"))() --// To make loadstrings work
 
 local smallestSoFar, prediction
 for i, y in pairs(sets) do
